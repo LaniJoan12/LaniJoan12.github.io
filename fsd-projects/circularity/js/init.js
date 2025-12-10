@@ -100,7 +100,24 @@ var init = function (window) {
             }
             
             // TODO 6 : YOUR CODE STARTS HERE //////////////////////
+            if (circle.x < 0) {
+    circle.x = canvas.width;
+}
+
+if (circle.y < 0) {
+    circle.y = canvas.height;
+}
+
+if (circle.y > canvas.height) {
+    circle.y = 0;
+}
+
+          
             
+
+
+
+
             // YOUR TODO 6 CODE ENDS HERE //////////////////////////
         }
         
