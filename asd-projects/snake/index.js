@@ -17,7 +17,7 @@ var apple = {};
 
 // TODO 5, Part 1: Create the snake variable
 const snake = {};
-var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+var colors = [" pastel pink", "pastel blue", "pastel yellow", "pastel green", " pastel purple"];
 var colorIndex = 0;
 // Constant Variables
 var ROWS = 20;
@@ -352,7 +352,7 @@ function getRandomAvailablePosition() {
 }
 
 function calculateHighScore() {
-  // retrieve the high score from session storage if it exists, or set it to 0
+  // retrieve the high `score from session storage if it exists, or set it to 0
   var highScore = sessionStorage.getItem("highScore") || 0;
 
   if (score > highScore) {
