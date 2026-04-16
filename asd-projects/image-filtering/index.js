@@ -1,49 +1,83 @@
-// This is a small program. There are only two sections. This first section is what runs
-// as soon as the page loads.
 $(document).ready(function () {
   render($("#display"), image);
   $("#apply").on("click", applyAndRender);
   $("#reset").on("click", resetAndRender);
 });
 
-/////////////////////////////////////////////////////////
-//////// event handler functions are below here /////////
-/////////////////////////////////////////////////////////
-
-// this function resets the image to its original value; do not change this function
 function resetAndRender() {
   reset();
   render($("#display"), image);
 }
 
-// this function applies the filters to the image and is where you should call
-// all of your apply functions
 function applyAndRender() {
-  // Multiple TODOs: Call your apply function(s) here
-
+  // Call your filters here
+  applyFilter(reddify);
+  applyFilter(increaseGreenByBlue);
+  applyFilter(smudge);
+  applyFilterNoBackground(decreaseBlue);
+  applyFilterNoBackground(invert);
   
-
-  // do not change the below line of code
   render($("#display"), image);
 }
 
 /////////////////////////////////////////////////////////
-// "apply" and "filter" functions should go below here //
+// Core Logic: The Loop Functions
 /////////////////////////////////////////////////////////
 
-// TODO 1, 2, 3 & 5: Create the applyFilter function here
+function applyFilter(filterFunction) {
+  for (let i = 0; i < image.length; i++) {
+    for (let j = 0; j < image[i].length; j++) {
+      let pixelArray = rgbStringToArray(image[i][j]);
+      filterFunction(pixelArray, i, j);
+      image[i][j] = rgbArrayToString(pixelArray);
+    }
+  }
+}
 
+function applyFilterNoBackground(filterFunction) {
+  let backgroundColor = image[0][0];
+  for (let i = 0; i < image.length; i++) {
+    for (let j = 0; j < image[i].length; j++) {
+      if (image[i][j] !== backgroundColor) {
+        let pixelArray = rgbStringToArray(image[i][j]);
+        filterFunction(pixelArray, i, j);
+        image[i][j] = rgbArrayToString(pixelArray);
+      }
+    }
+  }
+}
 
-// TODO 9 Create the applyFilterNoBackground function
+/////////////////////////////////////////////////////////
+// Helper and Filter Functions
+/////////////////////////////////////////////////////////
 
+function keepInBounds(num) {
+  return num < 0 ? 0 : (num > 255 ? 255 : num);
+}
 
-// TODO 6: Create the keepInBounds function
+function reddify(pixelArray, i, j) {
+  pixelArray[RED] = 200;
+}
 
+function decreaseBlue(pixelArray, i, j) {
+  pixelArray[BLUE] = keepInBounds(pixelArray[BLUE] - 50);
+}
 
-// TODO 4: Create reddify filter function
+function increaseGreenByBlue(pixelArray, i, j) {
+  pixelArray[GREEN] = keepInBounds(pixelArray[GREEN] + pixelArray[BLUE]);
+}
 
+function invert(pixelArray, i, j) {
+  pixelArray[RED] = 255 - pixelArray[RED];
+  pixelArray[GREEN] = 255 - pixelArray[GREEN];
+  pixelArray[BLUE] = 255 - pixelArray[BLUE];
+}
 
-// TODO 7 & 8: Create more filter functions
-
-
-// CHALLENGE code goes below here
+function smudge(pixelArray, i, j) {
+  if (i + 1 < image.length) {
+    let neighborArray = rgbStringToArray(image[i + 1][j]);
+    pixelArray[RED] = Math.floor((pixelArray[RED] + neighborArray[RED]) / 2);
+    pixelArray[GREEN] = Math.floor((pixelArray[GREEN] + neighborArray[GREEN]) / 2);
+    pixelArray[BLUE] = Math.floor((pixelArray[BLUE] + neighborArray[BLUE]) / 2);
+  }
+}
