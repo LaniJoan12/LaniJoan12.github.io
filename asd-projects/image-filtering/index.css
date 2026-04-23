@@ -20,9 +20,9 @@ button {
 }
 
 #apply {
-  background: green;
+  background: rgb(249, 185, 250);
 }
 
 #reset {
-  background: red;
+  background: rgb(194, 170, 195);
 }

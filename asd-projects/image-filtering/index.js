@@ -1,83 +1,87 @@
+// This is a small program. There are only two sections. This first section is what runs
+// as soon as the page loads.
 $(document).ready(function () {
   render($("#display"), image);
   $("#apply").on("click", applyAndRender);
   $("#reset").on("click", resetAndRender);
 });
 
+/////////////////////////////////////////////////////////
+//////// event handler functions are below here /////////
+/////////////////////////////////////////////////////////
+
+// this function resets the image to its original value; do not change this function
 function resetAndRender() {
   reset();
   render($("#display"), image);
 }
 
+// this function applies the filters to the image and is where you should call
+// all of your apply functions
 function applyAndRender() {
-  // Call your filters here
-  applyFilter(reddify);
-  applyFilter(increaseGreenByBlue);
-  applyFilter(smudge);
+  // Multiple TODOs: Call your apply function(s) here
+applyFilter(reddify);
   applyFilterNoBackground(decreaseBlue);
-  applyFilterNoBackground(invert);
+  applyFilter(increaseGreenByBlue);
+  applyFilterNoBackground(reddify);
   
+
+  // do not change the below line of code
   render($("#display"), image);
 }
 
 /////////////////////////////////////////////////////////
-// Core Logic: The Loop Functions
+// "apply" and "filter" functions should go below here //
 /////////////////////////////////////////////////////////
 
+// TODO 1, 2, 3 & 5: Create the applyFilter function here
 function applyFilter(filterFunction) {
-  for (let i = 0; i < image.length; i++) {
-    for (let j = 0; j < image[i].length; j++) {
-      let pixelArray = rgbStringToArray(image[i][j]);
-      filterFunction(pixelArray, i, j);
-      image[i][j] = rgbArrayToString(pixelArray);
+  for (var i = 0; i < image.length; i++) {
+    for (var j = 0; j < image[i].length; j++) {
+      var pixel = image[i][j];
+      var pixelArray = rgbStringToArray(pixel);
+
+      filterFunction(pixelArray);
+
+      var updatedPixel = rgbArrayToString(pixelArray);
+      image[i][j] = updatedPixel;
     }
   }
 }
 
-function applyFilterNoBackground(filterFunction) {
-  let backgroundColor = image[0][0];
-  for (let i = 0; i < image.length; i++) {
-    for (let j = 0; j < image[i].length; j++) {
+// TODO 9 Create the applyFilterNoBackground function
+function applyFilterNoBackground(filterFunction) { // Added { here
+  var backgroundColor = image[0][0];
+  for (var i = 0; i < image.length; i++) {
+    for (var j = 0; j < image[i].length; j++) {
       if (image[i][j] !== backgroundColor) {
-        let pixelArray = rgbStringToArray(image[i][j]);
-        filterFunction(pixelArray, i, j);
+        var pixelArray = rgbStringToArray(image[i][j]);
+        filterFunction(pixelArray);
         image[i][j] = rgbArrayToString(pixelArray);
       }
     }
   }
-}
+} // Make sure this closing brace is at the end of the function!
 
-/////////////////////////////////////////////////////////
-// Helper and Filter Functions
-/////////////////////////////////////////////////////////
 
+// TODO 6: Create the keepInBounds function
 function keepInBounds(num) {
   return num < 0 ? 0 : (num > 255 ? 255 : num);
 }
 
-function reddify(pixelArray, i, j) {
+// TODO 4: Create reddify filter function
+function reddify(pixelArray) {
   pixelArray[RED] = 200;
 }
 
-function decreaseBlue(pixelArray, i, j) {
-  pixelArray[BLUE] = keepInBounds(pixelArray[BLUE] - 50);
+// TODO 7 & 8: Create more filter functions
+function decreaseBlue(pixelArray) {
+  var newBlue = pixelArray[BLUE] - 50;
+  pixelArray[BLUE] = keepInBounds(newBlue);
 }
 
-function increaseGreenByBlue(pixelArray, i, j) {
-  pixelArray[GREEN] = keepInBounds(pixelArray[GREEN] + pixelArray[BLUE]);
+function increaseGreenByBlue(pixelArray) {
+  var newGreen = pixelArray[GREEN] + pixelArray[BLUE];
+  pixelArray[GREEN] = keepInBounds(newGreen);
 }
 
-function invert(pixelArray, i, j) {
-  pixelArray[RED] = 255 - pixelArray[RED];
-  pixelArray[GREEN] = 255 - pixelArray[GREEN];
-  pixelArray[BLUE] = 255 - pixelArray[BLUE];
-}
-
-function smudge(pixelArray, i, j) {
-  if (i + 1 < image.length) {
-    let neighborArray = rgbStringToArray(image[i + 1][j]);
-    pixelArray[RED] = Math.floor((pixelArray[RED] + neighborArray[RED]) / 2);
-    pixelArray[GREEN] = Math.floor((pixelArray[GREEN] + neighborArray[GREEN]) / 2);
-    pixelArray[BLUE] = Math.floor((pixelArray[BLUE] + neighborArray[BLUE]) / 2);
-  }
-}
